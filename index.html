@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+
+    <div class="map-container">
+        <div id="map"></div>
+        <img src="./images/tape-1.png" class="tape tape-top-left" alt="Tape">
+        <img src="./images/tape-2.png" class="tape tape-top-right" alt="Tape">
+        <img src="./images/tape-3.png" class="tape tape-bottom-left" alt="Tape">
+        <img src="./images/tape-4.png" class="tape tape-bottom-right" alt="Tape">
+    </div>
+
+    <script>
+        var map = L.map('map').setView([48.8566, 2.3522], 3);
+
+        L.tileLayer('https:////tiles.stadiamaps.com/tiles/stamen_watercolor/{z}/{x}/{y}.jpg', {
+            attribution: 'Map tiles by Stamen Design',
+            maxZoom: 18
+        }).addTo(map);
+
+        // Example GeoJSON for demonstration
+        fetch('https://raw.githubusercontent.com/johan/world.geo.json/master/countries.geo.json')
+            .then(res => res.json())
+            .then(geojsonData => {
+                L.geoJSON(geojsonData, {
+                    style: {
+                        color: "#b0994e",
+                        weight: 1,
+                        fillOpacity: 0.1
+                    },
+                    onEachFeature: function (feature, layer) {
+                        layer.on('click', function (e) {
+                            alert(`You clicked on: ${feature.properties.name}`);
+                        });
+                    }
+                }).addTo(map);
+            });
+
+        const locations = [
+            { name: "Tibet", coords: [29.6472, 91.1174] },
+            { name: "China", coords: [35.8617, 104.1954] },
+            { name: "England", coords: [52.3555, 1.1743] }
+        ];
+        const customIcon = L.icon({
+            iconUrl: 'images/pin.png',
+            iconSize: [32, 32],
+            iconAnchor: [16, 48],
+            popupAnchor: [0, -48]
+        });
+
+
+        locations.forEach(loc => {
+            L.marker(loc.coords, { icon: customIcon })
+                .addTo(map)
+                .bindPopup(loc.name);
+        });
+    </script>s
+</body>
+
+</html>
